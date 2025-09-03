@@ -74,7 +74,7 @@ function Navbar() {
               
               {/* Navigation Menu - Desktop */}
               <div className="hidden lg:flex items-center gap-6 ml-6">
-                <Link to="/recently-added" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
+                <Link to="/recently-updated" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
                   New
                 </Link>
                 <Link to="/most-popular" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
