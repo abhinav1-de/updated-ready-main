@@ -80,7 +80,7 @@ function Navbar() {
                 <Link to="/most-popular" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
                   Popular
                 </Link>
-                <Link to="/recently-updated" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
+                <Link to="/recently-added" className="text-crunchyroll-text-muted hover:text-crunchyroll-text transition-colors font-medium">
                   Simulcast
                 </Link>
                 <div className="relative group">
