@@ -139,17 +139,17 @@ html {
 
 /* Enter button */
 .enter-button {
-  background: rgba(255, 255, 255, 0.9);
-  color: black;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
   padding: 14px 28px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 500;
   margin: 8px 0 60px;
   transition: all 0.2s ease;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -168,9 +168,10 @@ html {
 }
 
 .enter-button:hover {
-  background: white;
+  background: rgba(255, 255, 255, 0.3);
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* FAQ Section */
@@ -415,3 +416,4 @@ html {
     margin-bottom: 20px;
   }
 }
+
