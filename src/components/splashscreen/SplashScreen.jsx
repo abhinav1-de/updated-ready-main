@@ -48,6 +48,15 @@ function SplashScreen() {
 
   return (
     <div className="splash-container">
+      <video 
+        className="background-video" 
+        autoPlay 
+        muted 
+        loop 
+        playsInline
+      >
+        <source src="/background-video.mp4" type="video/mp4" />
+      </video>
       <div className="splash-overlay"></div>
       <div className="content-wrapper">
         <div className="logo-container">
