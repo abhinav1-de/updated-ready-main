@@ -29,6 +29,7 @@ html {
   margin: 0;
   left: 0;
   top: 0;
+  background-color: #0a0a0a;
 }
 
 .background-video {
@@ -234,6 +235,45 @@ html {
   color: #999;
   line-height: 1.6;
   font-size: 15px;
+}
+
+/* Audio Control Button */
+.audio-control-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.audio-control-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.audio-control-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .audio-control-btn {
+    top: 15px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+  }
 }
 
 /* Responsive adjustments */
