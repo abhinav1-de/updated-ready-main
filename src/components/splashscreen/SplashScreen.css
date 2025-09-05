@@ -229,12 +229,12 @@ html {
 }
 
 .faq-item {
-  background: rgba(26, 26, 26, 0.6);
+  background: rgba(40, 25, 20, 0.2);
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid rgba(51, 51, 51, 0.5);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(120, 80, 60, 0.2);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .faq-question {
@@ -253,8 +253,9 @@ html {
 }
 
 .faq-question:hover {
-  background: rgba(37, 37, 37, 0.7);
-  backdrop-filter: blur(15px);
+  background: rgba(50, 35, 25, 0.3);
+  backdrop-filter: blur(20px);
+  border-color: rgba(150, 100, 70, 0.3);
 }
 
 .faq-toggle {
@@ -270,11 +271,11 @@ html {
 
 .faq-answer {
   padding: 0 24px 18px;
-  color: rgba(153, 153, 153, 0.9);
+  color: rgba(200, 180, 160, 0.9);
   line-height: 1.6;
   font-size: 15px;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
+  background: rgba(30, 20, 15, 0.15);
+  backdrop-filter: blur(8px);
 }
 
 /* Audio Control Button */
