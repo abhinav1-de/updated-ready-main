@@ -185,6 +185,36 @@ html {
   text-align: center;
   margin-bottom: 40px;
   color: white;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 
+               0 0 40px rgba(255, 255, 255, 0.3),
+               0 0 60px rgba(255, 255, 255, 0.2);
+  animation: typewriter 3s steps(30) 1s both, glow 2s ease-in-out infinite alternate;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid white;
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 
+                 0 0 40px rgba(255, 255, 255, 0.3),
+                 0 0 60px rgba(255, 255, 255, 0.2);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 
+                 0 0 50px rgba(255, 255, 255, 0.5),
+                 0 0 80px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes blink {
+  0%, 50% { border-color: transparent; }
+  51%, 100% { border-color: white; }
 }
 
 .faq-list {
@@ -194,10 +224,12 @@ html {
 }
 
 .faq-item {
-  background: #1a1a1a;
+  background: rgba(26, 26, 26, 0.6);
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #333;
+  border: 1px solid rgba(51, 51, 51, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .faq-question {
@@ -216,7 +248,8 @@ html {
 }
 
 .faq-question:hover {
-  background: #252525;
+  background: rgba(37, 37, 37, 0.7);
+  backdrop-filter: blur(15px);
 }
 
 .faq-toggle {
@@ -232,9 +265,11 @@ html {
 
 .faq-answer {
   padding: 0 24px 18px;
-  color: #999;
+  color: rgba(153, 153, 153, 0.9);
   line-height: 1.6;
   font-size: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
 }
 
 /* Audio Control Button */
