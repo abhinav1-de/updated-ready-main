@@ -51,7 +51,6 @@ function SplashScreen() {
       <video 
         className="background-video" 
         autoPlay 
-        muted 
         loop 
         playsInline
       >
