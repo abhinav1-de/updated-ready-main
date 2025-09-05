@@ -9,7 +9,7 @@ import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 const FAQ_ITEMS = [
   {
     question: "how to use adfree server?",
-    answer: "just click on HD2 for watching it adfree"
+    answer: "i have added many servers like pahe,multi and others make sure to check it"
   },
   {
     question: "What makes Z-ANIME the best site to watch anime free online?",
