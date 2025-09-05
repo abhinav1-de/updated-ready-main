@@ -24,7 +24,7 @@ import Voiceactor from "@/src/components/voiceactor/Voiceactor";
 function StarRating({ rating = 4.9, totalRatings = "23K" }) {
   const stars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
-  
+
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-1">
@@ -122,7 +122,7 @@ function Tag({ bgColor, index, icon, text, variant = "default" }) {
     sub: "bg-green-600 text-white",
     dub: "bg-purple-600 text-white"
   };
-  
+
   return (
     <div className={`${baseClasses} ${variantClasses[variant] || variantClasses.default}`}>
       {icon && <FontAwesomeIcon icon={icon} className="text-xs mr-1" />}
@@ -213,10 +213,10 @@ function AnimeInfo({ random = false }) {
               {/* Left Side - Main Content */}
               <div className="flex-1 max-w-4xl">
                 {/* Large Title - Crunchyroll Style */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 lg:mb-6 leading-none tracking-tight" style={{fontFamily: 'Lato, sans-serif', fontWeight: 700}}>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight" style={{fontFamily: 'Lato, sans-serif', fontWeight: 700}}>
                   {language === "EN" ? title : japanese_title}
                 </h1>
-                
+
                 {/* Episode Availability Notice */}
                 <div className="mb-4 lg:mb-6">
                   <p className="text-white text-base lg:text-lg font-medium" style={{fontFamily: 'Lato, sans-serif'}}>
@@ -266,21 +266,21 @@ function AnimeInfo({ random = false }) {
                       NOT YET RELEASED
                     </div>
                   )}
-                  
+
                   <button className="p-2 lg:p-3 border-2 border-orange-600 text-orange-600 hover:bg-orange-600/10 rounded transition-all duration-200" style={{borderColor: '#f47521', color: '#f47521'}}>
                     <FontAwesomeIcon icon={faBookmark} className="text-base lg:text-lg" />
                   </button>
-                  
+
                   <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
                     <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2l2.09 6.26L20 8l-4.17 4.18L16.18 20 12 16.77 7.82 20l.35-7.82L4 8l5.91.26L12 2z"/>
                     </svg>
                   </button>
-                  
+
                   <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
                     <FontAwesomeIcon icon={faShare} className="text-base lg:text-lg" />
                   </button>
-                  
+
                   <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
                     <FontAwesomeIcon icon={faEllipsisH} className="text-base lg:text-lg" />
                   </button>
@@ -289,7 +289,7 @@ function AnimeInfo({ random = false }) {
                 {/* Description - Crunchyroll Style */}
                 {info?.Overview && (
                   <div className="max-w-3xl mb-6 lg:mb-8">
-                    <p className="text-white text-sm lg:text-base leading-relaxed" style={{fontFamily: 'Lato, sans-serif', lineHeight: '1.6'}}>
+                    <p className="text-white text-base lg:text-base leading-relaxed" style={{fontFamily: 'Lato, sans-serif', lineHeight: '1.6'}}>
                       {info.Overview.length > 280 ? (
                         <>
                           {isFull ? info.Overview : `${info.Overview.slice(0, 280)}...`}
@@ -320,17 +320,17 @@ function AnimeInfo({ random = false }) {
                       <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Audio: </span>
                       <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Japanese, English</span>
                     </div>
-                    
+
                     <div>
                       <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Subtitles: </span>
                       <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>English, Bahasa Indonesia, Bahasa Melayu, Deutsch, Español (América Latina), Español (España), Français, Italiano, Português (Brasil), Русский, العربية, 中文 (繁體字), 한국어</span>
                     </div>
-                    
+
                     <div>
                       <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Content Advisory: </span>
                       <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Profanity, Violence</span>
                     </div>
-                    
+
                     <div>
                       <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Genres: </span>
                       <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>
