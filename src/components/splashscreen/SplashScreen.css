@@ -102,17 +102,21 @@ html {
 .search-input {
   width: 100%;
   padding: 14px 48px 14px 20px;
-  background: rgba(17, 17, 17, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(20, 35, 50, 0.3);
+  border: 1px solid rgba(100, 150, 200, 0.2);
   border-radius: 8px;
   color: white;
   font-size: 16px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .search-input:focus {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(150, 200, 255, 0.5);
+  background: rgba(25, 45, 65, 0.4);
+  box-shadow: 0 4px 25px rgba(100, 150, 200, 0.2);
 }
 
 .search-input::placeholder {
@@ -416,4 +420,3 @@ html {
     margin-bottom: 20px;
   }
 }
-
