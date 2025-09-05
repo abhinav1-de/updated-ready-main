@@ -4,10 +4,6 @@ import {
   faPlay,
   faClosedCaptioning,
   faMicrophone,
-  faBookmark,
-  faShare,
-  faEllipsisH,
-  faStar
 } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -20,65 +16,61 @@ import { useLanguage } from "@/src/context/LanguageContext";
 import { useHomeInfo } from "@/src/context/HomeInfoContext";
 import Voiceactor from "@/src/components/voiceactor/Voiceactor";
 
-// Star Rating Component
-function StarRating({ rating = 4.9, totalRatings = "23K" }) {
-  const stars = Math.floor(rating);
-  const hasHalfStar = rating % 1 !== 0;
-  
-  return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
-          <FontAwesomeIcon 
-            key={i} 
-            icon={faStar} 
-            className={`text-lg ${
-              i < stars 
-                ? 'text-yellow-400' 
-                : i === stars && hasHalfStar 
-                ? 'text-yellow-400' 
-                : 'text-gray-600'
-            }`}
-          />
-        ))}
-      </div>
-      <span className="text-white text-base">
-        Average Rating: <span className="font-bold">{rating} ({totalRatings})</span>
-        <FontAwesomeIcon icon={faEllipsisH} className="ml-2 text-gray-400 rotate-90" />
-      </span>
-    </div>
-  );
-}
-
-// Metadata Info Component for Sidebar
-function MetadataItem({ label, value, isLink = false }) {
+function InfoItem({ label, value, isProducer = true }) {
   return (
     value && (
-      <div className="text-sm">
-        <span className="text-gray-400 font-medium">{label}: </span>
-        <span className="text-gray-300">
-          {Array.isArray(value) ? value.join(", ") : value}
+      <div className="text-[11px] sm:text-[14px] font-medium transition-all duration-300">
+        <span className="text-gray-400">{`${label}: `}</span>
+        <span className="font-light text-white/90">
+          {Array.isArray(value) ? (
+            value.map((item, index) =>
+              isProducer ? (
+                <Link
+                  to={`/producer/${item
+                    .replace(/[&'"^%$#@!()+=<>:;,.?/\\|{}[\]`~*_]/g, "")
+                    .split(" ")
+                    .join("-")
+                    .replace(/-+/g, "-")}`}
+                  key={index}
+                  className="cursor-pointer transition-colors duration-300 hover:text-gray-300"
+                >
+                  {item}
+                  {index < value.length - 1 && ", "}
+                </Link>
+              ) : (
+                <span key={index}>
+                  {item}
+                  {index < value.length - 1 && ", "}
+                </span>
+              )
+            )
+          ) : isProducer ? (
+            <Link
+              to={`/producer/${value
+                .replace(/[&'"^%$#@!()+=<>:;,.?/\\|{}[\]`~*_]/g, "")
+                .split(" ")
+                .join("-")
+                .replace(/-+/g, "-")}`}
+              className="cursor-pointer transition-colors duration-300 hover:text-gray-300"
+            >
+              {value}
+            </Link>
+          ) : (
+            <span>{value}</span>
+          )}
         </span>
       </div>
     )
   );
 }
 
-// Tag Component for metadata badges
-function Tag({ bgColor, index, icon, text, variant = "default" }) {
-  const baseClasses = "px-2 py-1 text-xs font-medium rounded";
-  const variantClasses = {
-    default: "bg-gray-700 text-white",
-    rating: "bg-orange-600 text-white",
-    quality: "bg-blue-600 text-white",
-    sub: "bg-green-600 text-white",
-    dub: "bg-purple-600 text-white"
-  };
-  
+function Tag({ bgColor, index, icon, text }) {
   return (
-    <div className={`${baseClasses} ${variantClasses[variant] || variantClasses.default}`}>
-      {icon && <FontAwesomeIcon icon={icon} className="text-xs mr-1" />}
-      <span>{text}</span>
+    <div
+      className="flex space-x-1 justify-center items-center px-2 sm:px-3 py-0.5 sm:py-1 text-white backdrop-blur-md bg-white/10 font-medium text-[10px] sm:text-[13px] rounded-md sm:rounded-full transition-all duration-300 hover:bg-white/20"
+    >
+      {icon && <FontAwesomeIcon icon={icon} className="text-[10px] sm:text-[12px] mr-1" />}
+      <p className="text-[10px] sm:text-[12px]">{text}</p>
     </div>
   );
 }
@@ -134,188 +126,320 @@ function AnimeInfo({ random = false }) {
     return undefined;
   }
   const { title, japanese_title, poster, animeInfo: info } = animeInfo;
-  // Generate episode availability date (7 days from now)
-  const nextEpisodeDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const tags = [
+    {
+      condition: info.tvInfo?.rating,
+      bgColor: "#ffffff",
+      text: info.tvInfo.rating,
+    },
+    {
+      condition: info.tvInfo?.quality,
+      bgColor: "#FFBADE",
+      text: info.tvInfo.quality,
+    },
+    {
+      condition: info.tvInfo?.sub,
+      icon: faClosedCaptioning,
+      bgColor: "#B0E3AF",
+      text: info.tvInfo.sub,
+    },
+    {
+      condition: info.tvInfo?.dub,
+      icon: faMicrophone,
+      bgColor: "#B9E7FF",
+      text: info.tvInfo.dub,
+    },
+  ];
 
   return (
-    <div className="erc-root-layout text-white">
-      {/* Crunchyroll-style Large Hero Banner */}
-      <div className="relative h-[600px] lg:h-[700px] xl:h-[800px] w-full overflow-hidden mt-16">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src={poster}
-            alt={`${title} Background`}
-            className="w-full h-full object-cover"
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center center',
-              width: '100%',
-              height: '100%'
-            }}
-          />
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20"></div>
-        </div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <div className="relative w-full overflow-hidden mt-[74px] max-md:mt-[60px]">
 
-        {/* Content Overlay */}
-        <div className="relative z-10 h-full">
-          <div className="container mx-auto px-6 lg:px-8 xl:px-12 h-full">
-            <div className="flex h-full items-end pb-12 lg:pb-16">
-              {/* Left Side - Main Content */}
-              <div className="flex-1 max-w-4xl">
-                {/* Large Title - Crunchyroll Style */}
-                <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 lg:mb-6 leading-none tracking-tight" style={{fontFamily: 'Lato, sans-serif', fontWeight: 700}}>
-                  {language === "EN" ? title : japanese_title}
-                </h1>
-                
-                {/* Episode Availability Notice */}
-                <div className="mb-4 lg:mb-6">
-                  <p className="text-white text-base lg:text-lg font-medium" style={{fontFamily: 'Lato, sans-serif'}}>
-                    The next episode will be available on 9/12
-                  </p>
-                </div>
-
-                {/* Metadata Tags - Exact Crunchyroll Style */}
-                <div className="flex flex-wrap items-center gap-1 mb-4 lg:mb-6 text-white text-sm lg:text-base" style={{fontFamily: 'Lato, sans-serif'}}>
-                  <span className="inline-flex items-center px-2 py-1 bg-gray-700/80 rounded text-xs font-medium">
-                    {info?.tvInfo?.rating || 'U/A 16+'}
-                  </span>
-                  <span className="mx-1">•</span>
-                  {info?.tvInfo?.sub && info?.tvInfo?.dub ? (
-                    <span>Sub | Dub</span>
-                  ) : info?.tvInfo?.sub ? (
-                    <span>Sub</span>
-                  ) : info?.tvInfo?.dub ? (
-                    <span>Dub</span>
-                  ) : (
-                    <span>Sub | Dub</span>
-                  )}
-                  <span className="mx-1">•</span>
-                  <span>
-                    {info?.Genres?.slice(0, 4).join(", ") || "Adventure, Comedy, Drama, Fantasy"}
-                  </span>
-                </div>
-
-                {/* Star Rating */}
-                <div className="mb-8">
-                  <StarRating rating={4.9} totalRatings="23K" />
-                </div>
-
-                {/* Action Buttons - Exact Crunchyroll Style */}
-                <div className="flex items-center gap-3 mb-8 lg:mb-12">
-                  {animeInfo?.animeInfo?.Status?.toLowerCase() !== "not-yet-aired" ? (
-                    <Link
-                      to={`/watch/${animeInfo.id}`}
-                      className="inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded text-sm lg:text-base uppercase tracking-wide transition-all duration-200"
-                      style={{backgroundColor: '#f47521', fontFamily: 'Lato, sans-serif'}}
-                    >
-                      <FontAwesomeIcon icon={faPlay} className="text-sm" />
-                      START WATCHING E1
-                    </Link>
-                  ) : (
-                    <div className="inline-flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-3 bg-gray-700 text-white font-bold rounded text-sm lg:text-base uppercase tracking-wide">
-                      NOT YET RELEASED
+        {/* Main Content */}
+        <div className="relative z-10 container mx-auto py-4 sm:py-6 lg:py-12">
+          {/* Mobile Layout */}
+          <div className="block md:hidden">
+            <div className="flex flex-row gap-4">
+              {/* Poster Section */}
+              <div className="flex-shrink-0">
+                <div className="relative w-[130px] xs:w-[150px] aspect-[2/3] rounded-xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+                  <img
+                    src={`${poster}`}
+                    alt={`${title} Poster`}
+                    className="w-full h-full object-cover"
+                  />
+                  {animeInfo.adultContent && (
+                    <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-500/90 backdrop-blur-sm rounded-md text-[10px] font-medium">
+                      18+
                     </div>
                   )}
-                  
-                  <button className="p-2 lg:p-3 border-2 border-orange-600 text-orange-600 hover:bg-orange-600/10 rounded transition-all duration-200" style={{borderColor: '#f47521', color: '#f47521'}}>
-                    <FontAwesomeIcon icon={faBookmark} className="text-base lg:text-lg" />
-                  </button>
-                  
-                  <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
-                    <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2l2.09 6.26L20 8l-4.17 4.18L16.18 20 12 16.77 7.82 20l.35-7.82L4 8l5.91.26L12 2z"/>
-                    </svg>
-                  </button>
-                  
-                  <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
-                    <FontAwesomeIcon icon={faShare} className="text-base lg:text-lg" />
-                  </button>
-                  
-                  <button className="p-2 lg:p-3 text-white hover:text-orange-600 transition-all duration-200">
-                    <FontAwesomeIcon icon={faEllipsisH} className="text-base lg:text-lg" />
-                  </button>
-                </div>
-
-                {/* Description - Crunchyroll Style */}
-                {info?.Overview && (
-                  <div className="max-w-3xl mb-6 lg:mb-8">
-                    <p className="text-white text-sm lg:text-base leading-relaxed" style={{fontFamily: 'Lato, sans-serif', lineHeight: '1.6'}}>
-                      {info.Overview.length > 280 ? (
-                        <>
-                          {isFull ? info.Overview : `${info.Overview.slice(0, 280)}...`}
-                        </>
-                      ) : (
-                        info.Overview || "Humans couldn't handle magic without chanting until Monica Everett, the Silent Witch and one of the Seven Sages, made unspoken magecraft possible. Painfully shy, she enjoys seclusion. One day, Louis Miller, the Barrier Mage, delivers the king's order: Go undercover at a prestigious school for nobles to guard the second prince. Get ready for her silent mission to begin!"
-                      )}
-                    </p>
-                  </div>
-                )}
-
-                {/* More Details Link */}
-                <div>
-                  <button 
-                    className="font-bold text-sm uppercase tracking-wide transition-colors hover:underline"
-                    style={{color: '#f47521', fontFamily: 'Lato, sans-serif'}}
-                  >
-                    FEWER DETAILS
-                  </button>
                 </div>
               </div>
 
-              {/* Right Side - Metadata Sidebar - Exact Crunchyroll Style */}
-              <div className="hidden lg:block w-80 xl:w-96 ml-8 lg:ml-12 flex-shrink-0">
-                <div className="bg-black/40 backdrop-blur-sm rounded-lg p-4 lg:p-6 mt-8 lg:mt-12" style={{backgroundColor: 'rgba(0, 0, 0, 0.4)'}}>
-                  <div className="space-y-3 lg:space-y-4">
-                    <div>
-                      <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Audio: </span>
-                      <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Japanese, English</span>
-                    </div>
-                    
-                    <div>
-                      <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Subtitles: </span>
-                      <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>English, Bahasa Indonesia, Bahasa Melayu, Deutsch, Español (América Latina), Español (España), Français, Italiano, Português (Brasil), Русский, العربية, 中文 (繁體字), 한국어</span>
-                    </div>
-                    
-                    <div>
-                      <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Content Advisory: </span>
-                      <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>{info?.tvInfo?.rating || 'U/A 16+'} Profanity, Violence</span>
-                    </div>
-                    
-                    <div>
-                      <span className="text-white font-semibold text-sm" style={{fontFamily: 'Lato, sans-serif'}}>Genres: </span>
-                      <span className="text-gray-300 text-sm" style={{fontFamily: 'Lato, sans-serif'}}>{info?.Genres?.join(", ") || "Adventure, Comedy, Drama, Fantasy"}</span>
-                    </div>
-                    
-                    {/* Copyright Notice */}
-                    <div className="pt-3 lg:pt-4 border-t border-gray-700">
-                      <p className="text-xs text-gray-500" style={{fontFamily: 'Lato, sans-serif'}}>
-                        ©2024 Matsui Isora, Nanna Fujimi/KADOKAWA/Serendia Academy PR department
-                      </p>
-                    </div>
+              {/* Basic Info Section */}
+              <div className="flex-1 min-w-0 space-y-2">
+                {/* Title */}
+                <div className="space-y-0.5">
+                  <h1 className="text-lg xs:text-xl font-bold tracking-tight truncate">
+                    {language === "EN" ? title : japanese_title}
+                  </h1>
+                  {language === "EN" && japanese_title && (
+                    <p className="text-white/50 text-[11px] xs:text-xs truncate">JP Title: {japanese_title}</p>
+                  )}
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-1.5">
+                  {tags.map(({ condition, icon, text }, index) =>
+                    condition && (
+                      <Tag
+                        key={index}
+                        index={index}
+                        icon={icon}
+                        text={text}
+                      />
+                    )
+                  )}
+                </div>
+
+                {/* Overview - Limited for mobile */}
+                {info?.Overview && (
+                  <div className="text-gray-300 leading-relaxed text-xs">
+                    {info.Overview.length > 150 ? (
+                      <>
+                        {isFull ? (
+                          info.Overview
+                        ) : (
+                          <div className="line-clamp-3">{info.Overview}</div>
+                        )}
+                        <button
+                          className="mt-1 text-white/70 hover:text-white transition-colors text-[10px] font-medium"
+                          onClick={() => setIsFull(!isFull)}
+                        >
+                          {isFull ? "Show Less" : "Read More"}
+                        </button>
+                      </>
+                    ) : (
+                      info.Overview
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Watch Button - Full Width on Mobile */}
+            <div className="mt-6">
+              {animeInfo?.animeInfo?.Status?.toLowerCase() !== "not-yet-aired" ? (
+                <Link
+                  to={`/watch/${animeInfo.id}`}
+                  className="flex justify-center items-center w-full px-4 py-3 bg-white/10 backdrop-blur-md rounded-lg text-white transition-all duration-300 hover:bg-white/20 group"
+                >
+                  <FontAwesomeIcon
+                    icon={faPlay}
+                    className="mr-2 text-xs group-hover:text-white"
+                  />
+                  <span className="font-medium text-sm">Watch Now</span>
+                </Link>
+              ) : (
+                <div className="flex justify-center items-center w-full px-4 py-3 bg-gray-700/50 rounded-lg">
+                  <span className="font-medium text-sm">Not released</span>
+                </div>
+              )}
+            </div>
+
+            {/* Details Section - Full Width on Mobile */}
+            <div className="mt-6 space-y-3 py-3 backdrop-blur-md bg-white/5 rounded-lg px-3 text-xs">
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: "Japanese", value: info?.Japanese },
+                  { label: "Synonyms", value: info?.Synonyms },
+                  { label: "Aired", value: info?.Aired },
+                  { label: "Premiered", value: info?.Premiered },
+                  { label: "Duration", value: info?.Duration },
+                  { label: "Status", value: info?.Status },
+                  { label: "MAL Score", value: info?.["MAL Score"] },
+                ].map((item, index) => (
+                  <InfoItem
+                    key={index}
+                    label={item.label}
+                    value={item.value}
+                    isProducer={false}
+                  />
+                ))}
+              </div>
+
+              {/* Genres */}
+              {info?.Genres && (
+                <div className="pt-2 border-t border-white/10">
+                  <p className="text-gray-400 text-xs mb-1.5">Genres</p>
+                  <div className="flex flex-wrap gap-1">
+                    {info.Genres.map((genre, index) => (
+                      <Link
+                        to={`/genre/${genre.split(" ").join("-")}`}
+                        key={index}
+                        className="px-2 py-0.5 text-[10px] bg-white/5 rounded-md hover:bg-white/10 transition-colors"
+                      >
+                        {genre}
+                      </Link>
+                    ))}
                   </div>
                 </div>
+              )}
+
+              {/* Studios & Producers */}
+              <div className="space-y-2 pt-2 border-t border-white/10">
+                {[
+                  { label: "Studios", value: info?.Studios },
+                  { label: "Producers", value: info?.Producers },
+                ].map((item, index) => (
+                  <InfoItem
+                    key={index}
+                    label={item.label}
+                    value={item.value}
+                  />
+                ))}
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Mobile Layout for smaller screens */}
-      <div className="lg:hidden mt-8">
-        <div className="container mx-auto px-4">
-          <div className="bg-crunchyroll-gray rounded-lg p-6">
-            <h3 className="text-xl font-bold mb-4">Details</h3>
-            <div className="space-y-3">
-              <MetadataItem label="Audio" value="Japanese, English" />
-              <MetadataItem label="Subtitles" value="English, Bahasa Indonesia, and more" />
-              <MetadataItem label="Content Advisory" value={`${info?.tvInfo?.rating || 'UA'} Profanity, Violence`} />
-              <MetadataItem label="Genres" value={info?.Genres?.join(", ")} />
-              {info?.Studios && <MetadataItem label="Studios" value={info.Studios} />}
-              {info?.Premiered && <MetadataItem label="Premiered" value={info.Premiered} />}
-              {info?.Status && <MetadataItem label="Status" value={info.Status} />}
-              {info?.["MAL Score"] && <MetadataItem label="MAL Score" value={info["MAL Score"]} />}
+          {/* Desktop Layout - Existing Code */}
+          <div className="hidden md:block">
+            <div className="flex flex-row gap-6 lg:gap-10">
+              {/* Poster Section */}
+              <div className="flex-shrink-0">
+                <div className="relative w-[220px] lg:w-[260px] aspect-[2/3] rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+                  <img
+                    src={`${poster}`}
+                    alt={`${title} Poster`}
+                    className="w-full h-full object-cover"
+                  />
+                  {animeInfo.adultContent && (
+                    <div className="absolute top-3 left-3 px-2.5 py-0.5 bg-red-500/90 backdrop-blur-sm rounded-lg text-xs font-medium">
+                      18+
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Info Section */}
+              <div className="flex-1 space-y-4 lg:space-y-5 min-w-0">
+                {/* Title */}
+                <div className="space-y-1">
+                  <h1 className="text-3xl lg:text-4xl font-bold tracking-tight truncate">
+                    {language === "EN" ? title : japanese_title}
+                  </h1>
+                  {language === "EN" && japanese_title && (
+                    <p className="text-white/50 text-sm lg:text-base truncate">JP Title: {japanese_title}</p>
+                  )}
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2">
+                  {tags.map(({ condition, icon, text }, index) =>
+                    condition && (
+                      <Tag
+                        key={index}
+                        index={index}
+                        icon={icon}
+                        text={text}
+                      />
+                    )
+                  )}
+                </div>
+
+                {/* Overview */}
+                {info?.Overview && (
+                  <div className="text-gray-300 leading-relaxed max-w-3xl text-sm lg:text-base">
+                    {info.Overview.length > 270 ? (
+                      <>
+                        {isFull
+                          ? info.Overview
+                          : `${info.Overview.slice(0, 270)}...`}
+                        <button
+                          className="ml-2 text-white/70 hover:text-white transition-colors text-sm font-medium"
+                          onClick={() => setIsFull(!isFull)}
+                        >
+                          {isFull ? "Show Less" : "Read More"}
+                        </button>
+                      </>
+                    ) : (
+                      info.Overview
+                    )}
+                  </div>
+                )}
+
+                {/* Watch Button */}
+                {animeInfo?.animeInfo?.Status?.toLowerCase() !== "not-yet-aired" ? (
+                  <Link
+                    to={`/watch/${animeInfo.id}`}
+                    className="inline-flex items-center px-5 py-2.5 bg-white/10 backdrop-blur-md rounded-xl text-white transition-all duration-300 hover:bg-white/20 hover:scale-[1.02] group"
+                  >
+                    <FontAwesomeIcon
+                      icon={faPlay}
+                      className="mr-2 text-sm group-hover:text-white"
+                    />
+                    <span className="font-medium">Watch Now</span>
+                  </Link>
+                ) : (
+                  <div className="inline-flex items-center px-5 py-2.5 bg-gray-700/50 rounded-xl">
+                    <span className="font-medium">Not released</span>
+                  </div>
+                )}
+
+                {/* Details Section */}
+                <div className="space-y-4 py-4 backdrop-blur-md bg-white/5 rounded-xl px-5">
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { label: "Japanese", value: info?.Japanese },
+                      { label: "Synonyms", value: info?.Synonyms },
+                      { label: "Aired", value: info?.Aired },
+                      { label: "Premiered", value: info?.Premiered },
+                      { label: "Duration", value: info?.Duration },
+                      { label: "Status", value: info?.Status },
+                      { label: "MAL Score", value: info?.["MAL Score"] },
+                    ].map((item, index) => (
+                      <InfoItem
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                        isProducer={false}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Genres */}
+                  {info?.Genres && (
+                    <div className="pt-3 border-t border-white/10">
+                      <p className="text-gray-400 text-sm mb-2">Genres</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {info.Genres.map((genre, index) => (
+                          <Link
+                            to={`/genre/${genre.split(" ").join("-")}`}
+                            key={index}
+                            className="px-3 py-1 text-xs bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                          >
+                            {genre}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Studios & Producers */}
+                  <div className="space-y-3 pt-3 border-t border-white/10">
+                    {[
+                      { label: "Studios", value: info?.Studios },
+                      { label: "Producers", value: info?.Producers },
+                    ].map((item, index) => (
+                      <InfoItem
+                        key={index}
+                        label={item.label}
+                        value={item.value}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -323,27 +447,49 @@ function AnimeInfo({ random = false }) {
 
       {/* Seasons Section */}
       {seasons?.length > 0 && (
-        <div className="container mx-auto py-12 px-4">
-          <h2 className="text-2xl font-bold mb-8">More Seasons</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="container mx-auto py-8 sm:py-12">
+          <h2 className="text-2xl font-bold mb-6 sm:mb-8 px-1">More Seasons</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {seasons.map((season, index) => (
               <Link
                 to={`/${season.id}`}
                 key={index}
-                className={`relative aspect-[3/1] rounded-lg overflow-hidden cursor-pointer group transition-transform hover:scale-105 ${
+                className={`relative w-full aspect-[3/1] sm:aspect-[3/1] rounded-lg overflow-hidden cursor-pointer group ${
                   currentId === String(season.id)
-                    ? "ring-2 ring-crunchyroll-orange"
+                    ? "ring-2 ring-white/40 shadow-lg shadow-white/10"
                     : ""
                 }`}
               >
                 <img
                   src={season.season_poster}
                   alt={season.season}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-cover scale-150 ${
+                    currentId === String(season.id)
+                      ? "opacity-50"
+                      : "opacity-40"
+                  }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <p className="text-white font-bold text-center px-4">
+                {/* Dots Pattern Overlay */}
+                <div 
+                  className="absolute inset-0 z-10" 
+                  style={{ 
+                    backgroundImage: `url('data:image/svg+xml,<svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="0.5" fill="white" fill-opacity="0.25"/></svg>')`,
+                    backgroundSize: '3px 3px'
+                  }}
+                />
+                {/* Dark Gradient Overlay */}
+                <div className={`absolute inset-0 z-20 bg-gradient-to-r ${
+                  currentId === String(season.id)
+                    ? "from-black/50 to-transparent"
+                    : "from-black/40 to-transparent"
+                }`} />
+                {/* Title Container */}
+                <div className="absolute inset-0 z-30 flex items-center justify-center">
+                  <p className={`text-[14px] sm:text-[16px] md:text-[18px] font-bold text-center px-2 sm:px-4 transition-colors duration-300 ${
+                    currentId === String(season.id)
+                      ? "text-white"
+                      : "text-white/90 group-hover:text-white"
+                  }`}>
                     {season.season}
                   </p>
                 </div>
@@ -354,15 +500,15 @@ function AnimeInfo({ random = false }) {
       )}
 
       {/* Voice Actors Section */}
-      {animeInfo?.charactersVoiceActors?.length > 0 && (
-        <div className="container mx-auto py-12 px-4">
+      {animeInfo?.charactersVoiceActors.length > 0 && (
+        <div className="container mx-auto py-12">
           <Voiceactor animeInfo={animeInfo} />
         </div>
       )}
 
       {/* Recommendations Section */}
-      {animeInfo.recommended_data?.length > 0 && (
-        <div className="container mx-auto py-12 px-4">
+      {animeInfo.recommended_data.length > 0 && (
+        <div className="container mx-auto py-12">
           <CategoryCard
             label="Recommended for you"
             data={animeInfo.recommended_data}
