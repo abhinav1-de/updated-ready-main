@@ -25,6 +25,7 @@ function SplashScreen() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [expandedFaq, setExpandedFaq] = useState(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const handleSearchSubmit = useCallback(() => {
     const trimmedSearch = search.trim();
@@ -51,10 +52,21 @@ function SplashScreen() {
       <video 
         className="background-video" 
         autoPlay 
+        muted
         loop 
         playsInline
+        onLoadedData={() => setVideoLoaded(true)}
+        onError={(e) => console.log('Video failed to load:', e)}
+        onClick={() => {
+          const video = document.querySelector('.background-video');
+          if (video.muted) {
+            video.muted = false;
+            video.play();
+          }
+        }}
       >
         <source src="/background-video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
       <div className="splash-overlay"></div>
       <div className="content-wrapper">
@@ -114,4 +126,3 @@ function SplashScreen() {
 }
 
 export default SplashScreen;
-
